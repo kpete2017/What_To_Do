@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What to do?</title>
+    <link rel = "stylesheet" type = "text/css" href = "index.css" />
+</head>
+<body>
+    <header>
+        <h1 id="header-text">What to do?</h1>
+        <h3>Home</h3>
+        <h3>Indoor Activities</h3>
+        <h3>Outdoor Activities</h3>
+        <h3>Resturaunts</h3>
+
+        <div class="login">
+            <label id="sign-in">Hello, Sign in</label>
+            <form action="localhost:3000/index.html">
+                <input name="username" type="username" placeholder="Username">
+                <input name="password" type="password" placeholder="Password">
+                <input type="submit">
+            </form>
+        </div>
+    </header>
+    <main>
+        <div id="map"></div>
+        <script src="maps.js"></script>
+        <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEFUkvq5VhN8-8ZZcuvzmMaKo3jejXXXk&callback=initMap">
+        </script>
+        <h1 id="card_title">Types of activities:</h1>
+        <div class="card_layout">
+            <h1 id="indoor_card">Indoor Activity?</h1>
+            <h1 id="outdoor_card">Outdoor Activity?</h1>
+            <h1 id="restaurant_card">Resturaunt?</h1>
+        </div>
+    </main>
+    <footer></footer>
+</body>
+<script src="index.js"></script>
+</html>

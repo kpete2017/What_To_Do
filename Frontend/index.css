@@ -1,0 +1,99 @@
+:root {
+    --main-bg-color: hsla(13, 93%, 54%, 1);
+  }
+
+body {
+    margin: 0;
+    background-color: whitesmoke;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+header {
+    display: flex;
+    margin: 0;
+    padding: .5rem;
+    background-color: white;
+    color: var(--main-bg-color);
+    /* background-color: hsla(13, 93%, 54%, 1); */
+    justify-content: space-between;
+    align-items: center;
+}
+
+header > h3 {
+    cursor: pointer;
+}
+
+header > h1 {
+    cursor: pointer;
+}
+
+#header-text {
+    font-style: italic;
+}
+
+#sign-in {
+    color: var(--main-bg-color);
+}
+
+#map {
+    justify-content: center;
+    width: 95%;
+    height: 500px;
+    margin: 2rem;
+    background-color: grey;
+}
+
+.card_layout {
+    color: var(--main-bg-color);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#indoor_card {
+    background-color: white;
+    text-align: center;
+    height: 20rem;
+    width: 20rem;
+    padding: 2rem;
+    cursor: pointer;
+}
+
+#outdoor_card {
+    background-color: white;
+    text-align: center;
+    height: 20rem;
+    width: 20rem;
+    padding: 2rem;
+    cursor: pointer;
+}
+
+#restaurant_card {
+    background-color: white;
+    text-align: center;
+    height: 20rem;
+    width: 20rem;
+    padding: 2rem;
+    cursor: pointer;
+}
+
+#card_title {
+    color: var(--main-bg-color);
+    text-align: center;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: black;
+}
+  
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
