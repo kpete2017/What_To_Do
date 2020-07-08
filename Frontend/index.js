@@ -1,11 +1,3 @@
-var restaurantButton = document.getElementById("restaurant-button");
-var outdoorButton = document.getElementById("outdoor-button");
-var indoorButton = document.getElementById("indoor-button");
-var anyButton = document.getElementById("any-button");
-var shopButton = document.getElementById("shopping-button");
-var headingButton = document.getElementById("header-text")
-var themeButton = document.getElementById("themeButton")
-var currentTheme = "dark"
 var infoWindow;
 var pos;
 var map;
@@ -308,7 +300,6 @@ var themeMap = {
     dark: "light",
     light: "dark"
 };
-
 var theme = localStorage.getItem('theme')
 || (tmp = Object.keys(themeMap)[0],
     localStorage.setItem('theme', tmp),
@@ -322,6 +313,13 @@ function initMap() {
 }
 
 function createListeners() {
+    var restaurantButton = document.getElementById("restaurant-button");
+    var outdoorButton = document.getElementById("outdoor-button");
+    var indoorButton = document.getElementById("indoor-button");
+    var anyButton = document.getElementById("any-button");
+    var shopButton = document.getElementById("shopping-button");
+    var headingButton = document.getElementById("header-text")
+    var themeButton = document.getElementById("themeButton")
     restaurantButton.addEventListener("click", function(event) { handleEvent: restaurantSearch() });
     indoorButton.addEventListener("click", function(event) { handleEvent: indoorSearch() });
     outdoorButton.addEventListener("click", function(event) { handleEvent: outdoorSearch() });
@@ -337,6 +335,13 @@ function resetPage() {
 
 function createMap() {
     map = new google.maps.Map(document.getElementById('map'), {
+          disableDefaultUI: true, // a way to quickly hide all controls
+          scaleControl: true,
+          zoomControl: true,
+          streetViewControl: true,
+          zoomControlOptions: {
+            style: google.maps.ZoomControlStyle.LARGE 
+          },
         center: {lat: -34.397, lng: 150.644},
         zoom: 15,
         styles: darkStyle
@@ -346,8 +351,10 @@ function createMap() {
 function changeTheme() {
     var bodyClass = document.body.classList;
     bodyClass.add(theme);
+    const current = localStorage.getItem('theme');
+    const next = themeMap[current];
 
-    if (currentTheme === "dark" ) {
+    if (themeMap[current] === "light" ) {
         map.setOptions({ styles: lightStyle });
         bodyClass.replace("dark", "light");
         currentTheme = "light";
@@ -355,9 +362,8 @@ function changeTheme() {
         map.setOptions({ styles: darkStyle });
         currentTheme = "dark";
     }
-    
-    const current = localStorage.getItem('theme');
-    const next = themeMap[current];
+
+
     bodyClass.replace(current, next);
     localStorage.setItem('theme', next);
 }
@@ -386,87 +392,95 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 }
 
 function restaurantSearch() {
-    map.setZoom(12)
-    var restaurantRequest = {
-        location: pos,
-        // openNow: true,
-        rankBy: google.maps.places.RankBy.PROMINENCE,
-        radius: 15000,
-        keyword: "restaurant"
-    };
-    service = new google.maps.places.PlacesService(map);
-    service.nearbySearch(restaurantRequest, function(results, status) {
-        console.log(results)
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (let i = 0; i < results.length; i++) {
-                createMarker(results[i], "red");
-            }
-        }
-    })
+    const restaurantType = ["restaurant", "bar"];
+    searchPlacesApiForType(restaurantType, "red");
+    searchPlacesApiForKeyword(restaurantType, "red");
 }
 
 function indoorSearch() {
-    map.setZoom(12)
-    var indoorRequest = {
-        location: pos,
-        // openNow: true,
-        radius: 15000,
-        rankBy: google.maps.places.RankBy.PROMINENCE,
-        keyword: ""
-    };
-    service = new google.maps.places.PlacesService(map);
-    service.nearbySearch(indoorRequest, function(results, status) {
-        console.log(results)
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (let i = 0; i < results.length; i++) {
-                createMarker(results[i], "purple");
-            }
-        }
-    })
+    const indoorActivities = ["aquarium", "bowling alley", "casino", "zoo", "movie", "museum", "night club", "go kart", "arcade", "cinema", "amc", "Regal", "theatre","skating" ];
+    searchPlacesApiForKeyword(indoorActivities, "purple");
 }
 
 function outdoorSearch() {
-    map.setZoom(12)
-    var indoorRequest = {
-        location: pos,
-        // openNow: true,
-        radius: 15000,
-        rankBy: google.maps.places.RankBy.PROMINENCE,
-        keyword: "hike"
-    };
-    service = new google.maps.places.PlacesService(map);
-    service.nearbySearch(indoorRequest, function(results, status) {
-        console.log(results)
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (let i = 0; i < results.length; i++) {
-                createMarker(results[i], "orange");
-            }
-        }
-    })
-}
-
-function anySearch() {
-    console.log("Any Clicked")
+    const outdoorKeywords = ["hike", "trail", "Skiing", "Camping", "Fishing", "Swimming", "Golfing", "Beach", "amusement_park","park"];
+    searchPlacesApiForKeyword(outdoorKeywords, "green");
 }
 
 function shoppingSearch() {
+    const storeTypes = ["book_store", "clothing_store", "department_store", "shoe_store", "electronics_store", "furniture_store"];
+    searchPlacesApiForType(storeTypes, "orange");
+}
+
+function anySearch() {
+    console.log("Any Clicked");
+}
+
+function searchPlacesApiForKeyword(keyArray, color) {
+    AddRandomButtons()
     map.setZoom(12)
-    var shoppingRequest = {
-        location: pos,
-        // openNow: true,
-        radius: 15000,
-        rankBy: google.maps.places.RankBy.PROMINENCE,
-        type: "store"
-    };
-    service = new google.maps.places.PlacesService(map);
-    service.nearbySearch(shoppingRequest, function(results, status) {
-        console.log(results)
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            for (let i = 0; i < results.length; i++) {
-                createMarker(results[i], "green");
+    for(let i = 0; i < keyArray.length; i++) {
+        var request = {
+            location: pos,
+            openNow: true,
+            radius: 15000,
+            rankBy: google.maps.places.RankBy.PROMINENCE,
+            keyword: keyArray[i]
+        };
+
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, function(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (let i = 0; i < results.length; i++) {
+                    createMarker(results[i], color);
+                    addToList(results[i])
+                }
             }
-        }
-    })
+        })
+    }
+}
+
+function AddRandomButton() {
+    var element = document.getElementById("option-ask");
+    if(element) {
+        element.parentNode.removeChild(element);
+    }
+
+    
+}
+ 
+function addToList(result) {
+    var itemList = document.getElementById("item-list")
+    let item = document.createElement("li")
+    item.innerText = result.name
+    itemList.append(item)
+}
+
+function searchPlacesApiForType(keyArray, color) {
+    var element = document.getElementById("option-ask");
+    if(element) {
+        element.parentNode.removeChild(element);
+    }
+    map.setZoom(12)
+    for(let i = 0; i < keyArray.length; i++) {
+        var request = {
+            location: pos,
+            openNow: true,
+            radius: 15000,
+            rankBy: google.maps.places.RankBy.PROMINENCE,
+            type: keyArray[i]
+        };
+
+        service = new google.maps.places.PlacesService(map);
+        service.nearbySearch(request, function(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                for (let i = 0; i < results.length; i++) {
+                    createMarker(results[i], color);
+                    addToList(results[i])
+                }
+            }
+        })
+    }
 }
 
 function createMarker(place, color) {
