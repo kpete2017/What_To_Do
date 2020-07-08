@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script defer src="theme.js"></script>
     <title>What to do?</title>
     <link rel = "stylesheet" type = "text/css" href = "index.css" />
-    <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap"
       rel="stylesheet"
     />
+    <script src="index.js"></script>
 </head>
 <body>
     <header>
-        <h1 id="header-text">Activities around you:</h1>
+        <h1 id="header-text">What To Do?</h1>
 
         <div class="login">
             <label id="sign-in">Hello, Sign in</label>
@@ -30,7 +29,7 @@
         <ul class="navbar-nav">
           <li class="logo">
             <a href="#" class="nav-link">
-              <span class="link-text logo-text">What To Do?</span>
+              <span class="link-text logo-text">Account</span>
               <svg
                 aria-hidden="true"
                 focusable="false"
@@ -173,19 +172,19 @@
             </a>
           </li>
         </ul>
-      </nav>
+    </nav>
       <main>
         <div id="map"></div>
-        <script src="maps.js"></script>
         <script async defer
-             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEFUkvq5VhN8-8ZZcuvzmMaKo3jejXXXk&callback=initMap">
+             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAEFUkvq5VhN8-8ZZcuvzmMaKo3jejXXXk&callback=initMap&libraries=places">
         </script>
-      </main>
-      <div class="button-div">
-        <h2 id="button">Restaurant</h2>
-        <h2 id="button">Indoor Activity</h2>
-        <h2 id="button">Outdoor Activity</h2>
-        <h2 id="button">Any Activity</h2>
+    </main>
+    <div class="button-div">
+        <h2 id="restaurant-button">Restaurant</h2>
+        <h2 id="shopping-button">Shopping</h2>
+        <h2 id="indoor-button">Indoor Activity</h2>
+        <h2 id="outdoor-button">Outdoor Activity</h2>
+        <h2 id="any-button">Any Activity</h2>
     </div>
 </body>
 <script src="index.js"></script>
