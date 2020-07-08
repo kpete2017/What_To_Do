@@ -417,7 +417,7 @@ function anySearch() {
 }
 
 function searchPlacesApiForKeyword(keyArray, color) {
-    AddRandomButtons()
+    addRandomButton()
     map.setZoom(12)
     for(let i = 0; i < keyArray.length; i++) {
         var request = {
@@ -440,23 +440,8 @@ function searchPlacesApiForKeyword(keyArray, color) {
     }
 }
 
-function AddRandomButton() {
-    var element = document.getElementById("option-ask");
-    if(element) {
-        element.parentNode.removeChild(element);
-    }
-
-    
-}
- 
-function addToList(result) {
-    var itemList = document.getElementById("item-list")
-    let item = document.createElement("li")
-    item.innerText = result.name
-    itemList.append(item)
-}
-
 function searchPlacesApiForType(keyArray, color) {
+    addRandomButton();
     var element = document.getElementById("option-ask");
     if(element) {
         element.parentNode.removeChild(element);
@@ -500,4 +485,55 @@ function createMarker(place, color) {
 
       markerInfoWindow.open(map, this);
     });
+}
+
+function addToList(result) {
+    var itemList = document.getElementById("item-list");
+    let item = document.createElement("li");
+    item.innerText = result.name;
+    itemList.append(item);
+    item.addEventListener("click", function(event){ handleEvent: showResultCard(result) });
+}
+
+function addRandomButton() {
+    
+    var element = document.getElementById("option-ask");
+    if(element) {
+        element.parentNode.removeChild(element);
+    }
+
+    var menuButtons = document.getElementById("menu-buttons");
+    var myElement = document.getElementById("random-button");
+    if(!myElement) {
+        var randomButton = document.createElement("h2");
+        randomButton.id = "random-button";
+        randomButton.innerText = "Chose one for me!";
+        menuButtons.append(randomButton);
+        
+        var clearButton = document.createElement("h2");
+        clearButton.innerText = "Clear List";
+        menuButtons.append(clearButton);
+
+        clearButton.addEventListener("click", () => {
+            location.reload();
+        })
+    }
+}
+
+function showResultCard(result) {
+    console.log(result)
+    map.setCenter(result.geometry.location);
+    map.setZoom(17)
+    resultCard = document.createElement("div")
+    resultCard.id = "result-card"
+    resultCard.innerHTML = 
+    `
+    <h3>${result.name}</h3>
+    <p>Is ${result.opening_hours.isOpen() ? "closed" : "open" }</p>
+    <p>Rating: ${result.rating}</p>
+    <p>User Ratings Total: ${result.user_ratings_total}</p>
+    <p>Price Level: ${result.price_level}</p>
+    <p>Address: ${result.vicinity}</p>
+    `
+    document.body.append(resultCard)
 }
