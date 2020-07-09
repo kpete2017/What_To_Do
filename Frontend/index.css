@@ -24,6 +24,16 @@
     --transition-speed: 600ms;
 }
 
+#exit-button {
+    transition: 400ms;
+}
+
+#exit-button:hover {
+    color: #df49a6;
+    transform: rotate(-180deg);
+    transition: 400ms;
+}
+
 label {
     font-size: 12px;
 }
@@ -115,7 +125,7 @@ body {
 #menu-buttons h2:hover {
     color: #df49a6;
     cursor: pointer;
-    font-size: xx-large;
+    font-size: 1.65rem;
     transition: 400ms;
 }
 
@@ -132,7 +142,7 @@ body {
 .button-div h2:hover {
     color: #df49a6;
     cursor: pointer;
-    font-size: xx-large;
+    font-size: 1.65rem;
     transition: 400ms;
 }
 
@@ -170,6 +180,7 @@ body {
 #item-list li {
     padding: 1rem;
     border: 1px solid var(--bg-primary);
+    transition: 400ms;
 }
 
 #item-list li:hover {
@@ -236,13 +247,26 @@ body {
     width: 2rem;
     min-width: 2rem;
     margin: 0 1.5rem;
+    transition: 400ms;
 }
 
 .nav-link i {
     width: 2rem;
     min-width: 2rem;
     margin: 0 1.5rem;
+    transition: 800ms;
 }
+
+.nav-link:hover i {
+    transform: rotate(-180deg);
+    transition: 400ms;
+}
+
+.nav-link:hover svg {
+    transform: rotate(-180deg);
+    transition: 400ms;
+}
+
 
 .fa-primary {
     color: #ff7eee;
@@ -293,6 +317,56 @@ body {
 .navbar:hover .logo svg {
     transform: rotate(-180deg);
 }
+
+#result-card {
+    position: absolute;
+    color: var(--text-secondary);
+    background-color: var(--bg-secondary);
+    z-index: 1;
+    top: 6rem;
+    right: 3rem;
+    width: 20rem;
+    height: 37rem;
+    margin-left: 1rem;
+}
+
+#result-card h3 {
+    margin-left: 1rem;
+}
+
+#result-card p {
+    margin-left: 1rem;
+}
+
+#result-card i {
+    top: .5rem;
+    right: .5rem;
+    position: absolute;
+    cursor: pointer;
+}
+
+#result-card a {
+    color: var(--text-secondary);
+    margin-right: 1rem;
+    word-wrap: normal;
+    left: 1rem;
+    position: relative;
+}
+
+#result-card h2 {
+    background-color: var(--bg-primary);
+    padding: 1rem;
+    margin: 1rem;
+    cursor: pointer;
+    transition: 400ms;
+}
+
+#result-card h2:hover {
+    color: #df49a6;
+    font-size: 1.65rem;
+    transition: 400ms;
+}
+
   
   /* Small screens */
 @media only screen and (max-width: 600px) {
@@ -384,6 +458,15 @@ body {
     #map {
         height: 35rem;
     }
+
+    #result-card {
+        top: 10rem;
+        right: 0;
+        width: 15rem;
+        height: 27rem;
+        margin-left: 1rem;
+    }
+    
 }
   
   /* Large screens */
@@ -396,54 +479,6 @@ body {
       height: 100vh;
     }
 
-    #result-card {
-        position: absolute;
-        color: var(--text-secondary);
-        background-color: var(--bg-secondary);
-        z-index: 1;
-        top: 6rem;
-        right: 1rem;
-        width: 20rem;
-        height: 37rem;
-        margin-left: 1rem;
-    }
-
-    #result-card h3 {
-        margin-left: 1rem;
-    }
-
-    #result-card p {
-        margin-left: 1rem;
-    }
-
-    #result-card i {
-        top: .5rem;
-        right: .5rem;
-        position: absolute;
-        cursor: pointer;
-    }
-
-    #result-card a {
-        color: var(--text-secondary);
-        margin-right: 1rem;
-        word-wrap: normal;
-        left: 1rem;
-        position: relative;
-    }
-
-    #result-card h2 {
-        background-color: var(--bg-primary);
-        padding: 1rem;
-        margin: 1rem;
-        cursor: pointer;
-        transition: 400ms;
-    }
-    
-    #result-card h2:hover {
-        color: #df49a6;
-        font-size: xx-large;
-        transition: 400ms;
-    }
 
     .navbar:hover {
       width: 18.4rem;
