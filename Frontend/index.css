@@ -269,7 +269,6 @@ body {
     width: 100%;
 }
 
-
 .logo svg {
     transform: rotate(0deg);
     transition: var(--transition-speed);
@@ -280,7 +279,7 @@ body {
 }
 
 .navbar:hover i {
-    color: #df49a6;;
+    color: #ff7eee;;
     transition: var(--transition-speed);
 }
   
@@ -403,19 +402,49 @@ body {
         background-color: var(--bg-secondary);
         z-index: 1;
         top: 6rem;
-        right: -.25rem;
+        right: 1rem;
         width: 20rem;
-        height: 38rem;
-
+        height: 37rem;
+        margin-left: 1rem;
     }
 
     #result-card h3 {
         margin-left: 1rem;
     }
+
     #result-card p {
         margin-left: 1rem;
     }
-  
+
+    #result-card i {
+        top: .5rem;
+        right: .5rem;
+        position: absolute;
+        cursor: pointer;
+    }
+
+    #result-card a {
+        color: var(--text-secondary);
+        margin-right: 1rem;
+        word-wrap: normal;
+        left: 1rem;
+        position: relative;
+    }
+
+    #result-card h2 {
+        background-color: var(--bg-primary);
+        padding: 1rem;
+        margin: 1rem;
+        cursor: pointer;
+        transition: 400ms;
+    }
+    
+    #result-card h2:hover {
+        color: #df49a6;
+        font-size: xx-large;
+        transition: 400ms;
+    }
+
     .navbar:hover {
       width: 18.4rem;
     }

@@ -521,19 +521,33 @@ function addRandomButton() {
 }
 
 function showResultCard(result) {
-    console.log(result)
+    let resultCardCheck = document.getElementById("result-card")
+    if(resultCardCheck) { exitCard(resultCardCheck) }
+
     map.setCenter(result.geometry.location);
-    map.setZoom(17)
-    resultCard = document.createElement("div")
-    resultCard.id = "result-card"
+    map.setZoom(17);
+
+    let resultCard = document.createElement("div");
+    resultCard.id = "result-card";
     resultCard.innerHTML = 
-    `
+        `
+    <i id="exit-button" class="fa fa-times"></i>
     <h3>${result.name}</h3>
+    <p>Type of activity: ${result.types[0].replace("_"," ")}, ${result.types[1].replace("_"," ")}</p>
     <p>Is ${result.opening_hours.isOpen() ? "closed" : "open" }</p>
     <p>Rating: ${result.rating}</p>
     <p>User Ratings Total: ${result.user_ratings_total}</p>
     <p>Price Level: ${result.price_level}</p>
-    <p>Address: ${result.vicinity}</p>
-    `
-    document.body.append(resultCard)
+    <a href="https://www.google.com/maps/search/${result.vicinity.replace(" ", "+")}">Address: ${result.vicinity}</a>
+    <h2>Try Another?</h2>
+    `;
+
+    document.body.append(resultCard);
+    window.scrollTo(0,0);
+    let exitButton = document.getElementById("exit-button");
+    exitButton.addEventListener("click", function(event) { handleEvent: exitCard(resultCard) });
+}
+
+function exitCard(card) {
+    card.parentNode.removeChild(card)
 }
