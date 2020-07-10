@@ -6,7 +6,7 @@ class BlacklistsController < ApplicationController
     end
 
     def create
-        @blacklist = Favorite.create(blacklist_params)
+        @blacklist = Blacklist.create(blacklist_params)
 
         render json: @blacklist
     end

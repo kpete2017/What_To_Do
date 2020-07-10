@@ -358,7 +358,7 @@ function favoritesButtonClicked() {
 }
 
 function createFavoritesPage(results) {
-  console.log(results)
+
 
   let listItemTest = document.getElementById("favorites-div")
 
@@ -371,15 +371,24 @@ function createFavoritesPage(results) {
   favoritesDiv.innerHTML = `
   <i id="exit-button-favorite" class="fa fa-times"></i>
     <h2>Favorites</h2>
-    <form>
-    <input name="favorites" type="text" placeholder="Enter New Favorite!">
+    <form id="newFav">
+    <input name="favorites" type="favorites" placeholder="Enter New Favorite!">
     <button id="submit" type="submit">Submit</button>
     </form>
     <ul id="favorite-list"></ul>
   `
-  let count = 0;
 
   document.body.append(favoritesDiv);
+
+  let newFavoriteListener = document.getElementById("newFav");
+  newFavoriteListener.addEventListener("submit", function(event) { handleEvent: createNewFavorite(event, favoritesDiv, results) });
+  createFavList(favoritesDiv, results)
+}
+
+function createFavList(favoritesDiv, results) {
+
+  let count = 0;
+
   const favoriteList = document.getElementById("favorite-list");
   results.forEach( favorite => {
     let listItem = document.createElement("li");
@@ -391,15 +400,56 @@ function createFavoritesPage(results) {
     favoriteList.append(listItem);
     favoriteList.append(deleteItem)
 
-    let getDeleteButton = document.getElementById(`delete-favorite${count}`)
-    let getListItem = document.getElementById(`favorite-item${count}`)
-    getDeleteButton.addEventListener("click", function(event) { handleEvent: removeFavorite(getDeleteButton, getListItem, blacklist) })
+    let getDeleteButton = document.getElementById(`delete-favorite${count}`);
+    let getListItem = document.getElementById(`favorite-item${count}`);
+    getDeleteButton.addEventListener("click", function(event) { handleEvent: removeFavorite(getDeleteButton, getListItem, favorite) });
     
     count++;
   })
 
   let exitButton = document.getElementById("exit-button-favorite");
   exitButton.addEventListener("click", function(event) { handleEvent: exitCard(favoritesDiv) });
+}
+
+function createNewFavorite(event, favoritesDiv, results) {
+  event.preventDefault();
+  const newFavoriteFormData = new FormData(event.target);
+  const newFavorite = newFavoriteFormData.get("favorites");
+  const favoriteJson = {
+    "name": newFavorite
+  }
+
+  fetch(favoritesURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(favoriteJson)
+  })
+    .then(parseJSON)
+    .then(result => appendNewFavorite(favoritesDiv, result))
+
+}
+
+function appendNewFavorite(result) {
+  let count = 100000;
+  const favoriteList = document.getElementById("favorite-list");
+  let listItem = document.createElement("li");
+  let deleteItem = document.createElement("h4")
+  listItem.id = `favorite-item${count}`
+  deleteItem.id = `delete-favorite${count}`
+  deleteItem.innerText = "Delete"
+  listItem.innerText = result.name;
+  favoriteList.append(listItem);
+  favoriteList.append(deleteItem)
+
+
+  let getDeleteButton = document.getElementById(`delete-favorite${count}`);
+  let getListItem = document.getElementById(`favorite-item${count}`);
+
+  deleteItem.addEventListener("click", function(event) { handleEvent: removeFavorite(getDeleteButton, getListItem, result) });
+  count++
 }
 
 function removeFavorite(listItem, deleteItem, favorite) {
@@ -432,45 +482,97 @@ function blacklistButtonClicked() {
 
 function createBlacklistPage(results) {
 
-  let listItemTest = document.getElementById("favorites-div")
+  let listItemTest = document.getElementById("blacklist-div")
 
   if(listItemTest) {
     listItemTest.parentNode.removeChild(listItemTest)
   }
 
-  console.log(results)
-
-  const favoritesDiv = document.createElement("div")
-  favoritesDiv.id = "favorites-div"
-  favoritesDiv.innerHTML = `
-  <i id="exit-button-favorite" class="fa fa-times"></i>
+  const blacklistDiv = document.createElement("div")
+  blacklistDiv.id = "blacklist-div"
+  blacklistDiv.innerHTML = `
+  <i id="exit-button-blacklist" class="fa fa-times"></i>
     <h2>Blacklisted Places</h2>
-    <ul id="favorite-list"></ul>
+    <form id="newBlack">
+    <input name="blacklist" type="blacklist" placeholder="Enter New Blacklist!">
+    <button id="submit" type="submit">Submit</button>
+    </form>
+    <ul id="blacklist-list"></ul>
   `
+
+  document.body.append(blacklistDiv);
+
+  let newBlacklistListener = document.getElementById("newBlack")
+  newBlacklistListener.addEventListener("submit", function(event) { handleEvent: createNewBlacklist(event, results) });
+  createBlackList(blacklistDiv, results)
+}
+
+function createBlackList(blacklistDiv, results) {
+
   let count = 0;
 
-  document.body.append(favoritesDiv);
-  const favoriteList = document.getElementById("favorite-list");
+  const blacklistList = document.getElementById("blacklist-list");
+  console.log(results)
   results.forEach( blacklist => {
     let listItem = document.createElement("li");
     let deleteItem = document.createElement("h4")
-    listItem.id = `favorite-item${count}`
-    deleteItem.id = `delete-favorite${count}`
+    listItem.id = `blacklist-item${count}`
+    deleteItem.id = `delete-blacklist${count}`
     deleteItem.innerText = "Delete"
     listItem.innerText = blacklist.name;
-    favoriteList.append(listItem);
-    favoriteList.append(deleteItem)
+    blacklistList.append(listItem);
+    blacklistList.append(deleteItem)
 
-    let getDeleteButton = document.getElementById(`delete-favorite${count}`)
-    let getListItem = document.getElementById(`favorite-item${count}`)
+    let getDeleteButton = document.getElementById(`delete-blacklist${count}`)
+    let getListItem = document.getElementById(`blacklist-item${count}`)
     getDeleteButton.addEventListener("click", function(event) { handleEvent: removeBlacklist(getDeleteButton, getListItem, blacklist) })
     
     count++;
   })
 
-  let exitButton = document.getElementById("exit-button-favorite");
-  exitButton.addEventListener("click", function(event) { handleEvent: exitCard(favoritesDiv) });
+  let exitButton = document.getElementById("exit-button-blacklist");
+  exitButton.addEventListener("click", function(event) { handleEvent: exitCard(blacklistDiv) });
 }
+
+function createNewBlacklist(event, results) {
+  event.preventDefault();
+  const newBlacklistFormData = new FormData(event.target);
+  const newBlacklist = newBlacklistFormData.get("blacklist");
+  const blacklistJson = {
+    "name": newBlacklist
+  }
+  fetch(blacklistURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+    },
+    body: JSON.stringify(blacklistJson)
+  })
+    .then(parseJSON)
+    .then(result => appendNewBlacklist(result))
+}
+
+function appendNewBlacklist(result) {
+  let count = 200000;
+  const blacklistList = document.getElementById("blacklist-list");
+  let listItem = document.createElement("li");
+  let deleteItem = document.createElement("h4")
+  listItem.id = `blacklist-item${count}`
+  deleteItem.id = `delete-blacklist${count}`
+  deleteItem.innerText = "Delete"
+  listItem.innerText = result.name;
+  blacklistList.append(listItem);
+  blacklistList.append(deleteItem)
+
+
+  let getDeleteButton = document.getElementById(`delete-blacklist${count}`);
+  let getListItem = document.getElementById(`blacklist-item${count}`);
+
+  deleteItem.addEventListener("click", function(event) { handleEvent: removeBlacklist(getDeleteButton, getListItem, result) });
+  count++
+}
+
 
 function removeBlacklist(listItem, deleteItem, blacklist) {
 
@@ -488,7 +590,6 @@ function removeBlacklist(listItem, deleteItem, blacklist) {
 }
 
 function settingsButtonClicked() {
-  console.log("Settings Button Clicked")
 }
 
 function createNonAccountListeners() {
@@ -534,7 +635,6 @@ function createWelcomeMessage() {
     welcomeMessage = document.createElement("h2");
     welcomeMessage.id = "welcome-message";
     if (localStorage.getItem('username') === 'null') {
-      console.log(localStorage.getItem('username'))
       resetPage();
     }
     welcomeMessage.innerText = `Welcome Back ${localStorage.getItem('username')}!`;
@@ -611,7 +711,6 @@ function successfulLogin(user) {
   favoriteCounter = 0;
   blacklistCounter = 0;
 
-  console.log(user.favorites);
 
   localStorage.setItem('favorites', JSON.stringify(user.favorites));
   localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
@@ -710,7 +809,6 @@ function shoppingSearch() {
 }
 
 function anySearch() {
-  console.log("Any Clicked");
 }
 
 function searchPlacesApiForKeyword(keyArray, color) {
@@ -870,7 +968,6 @@ function exitCard(card) {
 }
 
 function favoriteButtonEvent(){
-  console.log("Favorite Button Clicked")
 }
 
 function randomButtonEvent(results) {
@@ -884,7 +981,6 @@ function randomButtonEvent(results) {
 }
 
 function blacklistButtonEvent() {
-  console.log("Blacklist button clicked")
 }
 
 function checkIfCardExists() {

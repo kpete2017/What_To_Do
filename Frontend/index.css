@@ -347,6 +347,55 @@ body {
     transition: 400ms;
 }
 
+#blacklist-div {
+    overflow: auto;
+    padding: 1rem;
+    color: var(--text-secondary);
+    background-color: var(--bg-secondary);
+    position: absolute;
+    height:35rem;
+    width: 25rem;
+    top: 6rem;
+    left: 20rem;
+}
+
+#blacklist-div h2{
+    margin: 1rem;
+}
+
+#blacklist-div form{
+    margin: 1rem;
+}
+
+#blacklist-div #exit-button-blacklist {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: var(--text-secondary);
+    transition: 400ms;
+    cursor: pointer;
+}
+
+#blacklist-div #exit-button-blacklist:hover {
+    color: #ff7eee;
+    transform: rotate(-180deg);
+    transition: 400ms;
+}
+
+#blacklist-list h4 {
+    width: 2.5rem;
+    background-color: var(--bg-primary);
+    padding: .75rem;
+    font-size: x-small;
+    cursor: pointer;
+    transition: 400ms;
+}
+
+#blacklist-list h4:hover {
+    color: #ff7eee;
+    transition: 400ms;
+}
+
 
 #login a {
     color: var(--text-secondary);
