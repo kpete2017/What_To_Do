@@ -317,8 +317,8 @@ function initMap() {
 }
 
 function checkForToken() {
-  var loginForm = document.getElementById("login-user");
-  var signUp = document.getElementById("sign-up");
+  const loginForm = document.getElementById("login-user");
+  const signUp = document.getElementById("sign-up");
   if(localStorage.getItem('token')) {
     createWelcomeMessage();
     
@@ -571,7 +571,6 @@ function appendNewBlacklist(result) {
   blacklistList.append(listItem);
   blacklistList.append(deleteItem)
 
-
   let getDeleteButton = document.getElementById(`delete-blacklist${count}`);
   let getListItem = document.getElementById(`blacklist-item${count}`);
 
@@ -665,16 +664,43 @@ function createWelcomeMessage() {
 
 function displaySignUp(event) {
   event.preventDefault();
-  var createAccount = document.getElementById("create-account")
-  var createAccount2 = document.getElementById("create-account2")
-  var createForm = document.getElementById("login-user");
-  var createAccountButton = document.getElementById("submit")
-  createAccountButton.textContent = "Create new account"
-  createForm.id = "create-user"
+  const login = document.getElementById("login")
+  const createAccount = document.getElementById("create-account")
+  const createAccount2 = document.getElementById("create-account2")
+  const createForm = document.getElementById("login-user");
+  const createAccountButton = document.getElementById("submit")
+  createForm.parentNode.removeChild(createForm)
   createAccount.parentNode.removeChild(createAccount)
   createAccount2.parentNode.removeChild(createAccount2)
+  createAccountButton.parentNode.removeChild(createAccountButton)
 
-  createForm.addEventListener("submit", function(event) { handleEvent: createNewUser(event) });
+  console.log(login)
+
+  const newForm = document.createElement("form")
+  newForm.id = "create-user"
+
+  login.append(newForm)
+
+  const usernameInput = document.createElement("input")
+  usernameInput.name = "username"
+  usernameInput.type = "username"
+  usernameInput.placeholder = "Username"
+
+  const passwordInput = document.createElement("input")
+  passwordInput.name = "password"
+  passwordInput.type = "password"
+  passwordInput.placeholder = "Password"
+
+  const newButton = document.createElement("button")
+  newButton.id = "submit"
+  newButton.type = "submit"
+  newButton.textContent = "submit"
+
+  newForm.append(usernameInput)
+  newForm.append(passwordInput)
+  newForm.append(newButton)
+
+  newForm.addEventListener("submit", function(event) { handleEvent: createNewUser(event) });
 }
 
 function createNewUser(event) {
@@ -683,6 +709,7 @@ function createNewUser(event) {
   const username = createNewFormData.get("username")
   const password = createNewFormData.get("password")
   const userData = { username, password }
+  console.log("Made it to post fetch")
   fetch(usersURL, {
     method: "POST",
     headers: {
@@ -695,18 +722,15 @@ function createNewUser(event) {
 }
 
 function successfulCreateLogin(user) {
+
+  newUser = user.user
+
   localStorage.setItem('token', user.token);
-  localStorage.setItem('username', user.username);
-  favoriteCounter = 0;
-  blacklistCounter = 0;
-
-
-  localStorage.setItem('favorites', JSON.stringify(user.favorites));
-  localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
+  localStorage.setItem('username', newUser.username);
 
   
   createWelcomeMessage();
-  resetPage();
+  // resetPage();
 }
 
 function loginUser(event) {
@@ -733,14 +757,6 @@ function successfulLogin(user) {
   if(user.username != undefined) {
     localStorage.setItem('token', user.token);
     localStorage.setItem('username', user.username);
-    favoriteCounter = 0;
-    blacklistCounter = 0;
-
-
-    localStorage.setItem('favorites', JSON.stringify(user.favorites));
-    localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
-
-
     
     createWelcomeMessage();
     resetPage();
