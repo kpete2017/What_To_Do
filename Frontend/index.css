@@ -24,6 +24,10 @@
     --transition-speed: 600ms;
 }
 
+#welcome-message {
+    color: var(--text-primary);
+}
+
 #exit-button {
     transition: 400ms;
 }
@@ -32,6 +36,7 @@
     color: #df49a6;
     transform: rotate(-180deg);
     transition: 400ms;
+    cursor: pointer;
 }
 
 label {
@@ -146,11 +151,11 @@ body {
     transition: 400ms;
 }
 
-#sign-in {
+#sign-up {
       color: var(--text-primary);
 }
 
-#sign-in:hover {
+#sign-up:hover {
     color: #df49a6;
     cursor: pointer;
     transition: 400ms;
@@ -162,7 +167,7 @@ body {
     transition: 400ms;
 }
 
-#create-account {
+#create-account, #create-account2 {
     color: var(--text-primary);
 }
 
@@ -303,7 +308,7 @@ body {
 }
 
 .navbar:hover i {
-    color: #ff7eee;;
+    color: #ff7eee;
     transition: var(--transition-speed);
 }
   
@@ -330,6 +335,7 @@ body {
     margin-left: 1rem;
 }
 
+
 #result-card h3 {
     margin-left: 1rem;
 }
@@ -347,14 +353,21 @@ body {
 
 #result-card a {
     color: var(--text-secondary);
-    margin-right: 1rem;
-    word-wrap: normal;
+    right: 1rem;
     left: 1rem;
-    position: relative;
+    position: absolute;
+    transition: 400ms;
+}
+
+#result-card a:hover {
+    color: #ff7eee;
+    transition: 400ms;
 }
 
 #result-card h2 {
     background-color: var(--bg-primary);
+    position: absolute;
+    bottom: 1rem;
     padding: 1rem;
     margin: 1rem;
     cursor: pointer;

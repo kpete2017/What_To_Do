@@ -1,3 +1,8 @@
+var baseURL = "http://localhost:3000";
+var loginURL = `${baseURL}/login`;
+var usersURL = `${baseURL}/users`;
+var favoritesURL = `${baseURL}/favorites`;
+var blacklistURL = `${baseURL}/blacklists`;
 var infoWindow;
 var pos;
 var map;
@@ -306,12 +311,55 @@ var theme = localStorage.getItem('theme')
   tmp);
 
 function initMap() {
+  checkForToken()
   createMap(); 
   navigator.geolocation ? getGeoLocation() : handleLocationError(false, infoWindow, map.getCenter());
-  createListeners()
 }
 
-function createListeners() {
+function checkForToken() {
+  var loginForm = document.getElementById("login-user");
+  var signUp = document.getElementById("sign-up");
+  if(localStorage.getItem('token')) {
+    createWelcomeMessage()
+    createAccountListeners()
+  } else {
+    signUp.addEventListener("click", function(event) { handleEvent: displaySignUp(event) });
+    loginForm.addEventListener("submit", function(event) { handleEvent: loginUser(event) });
+  }
+  createNonAccountListeners();
+}
+
+function createAccountListeners() {
+  var homeButton = document.getElementById("home")
+  var favoritesButton = document.getElementById("favorites")
+  var blacklistButton = document.getElementById("blacklist")
+  var settingsButton = document.getElementById("settings")
+
+  homeButton.addEventListener("click", function(event) { handleEvent: homeButtonClicked() })
+  favoritesButton.addEventListener("click", function(event) { handleEvent: favoritesButtonClicked() })
+  blacklistButton.addEventListener("click", function(event) { handleEvent: blacklistButtonClicked() })
+  settingsButton.addEventListener("click", function(event) { handleEvent: settingsButtonClicked() })
+}
+
+function homeButtonClicked() {
+  window.scrollTo(0,0);
+}
+
+function favoritesButtonClicked() {
+  console.log("Favorites Button Clicked")
+
+}
+
+function blacklistButtonClicked() {
+  console.log("Blacklist Button Clicked")
+}
+
+function settingsButtonClicked() {
+  console.log("Settings Button Clicked")
+}
+
+
+function createNonAccountListeners() {
   var restaurantButton = document.getElementById("restaurant-button");
   var outdoorButton = document.getElementById("outdoor-button");
   var indoorButton = document.getElementById("indoor-button");
@@ -319,6 +367,8 @@ function createListeners() {
   var shopButton = document.getElementById("shopping-button");
   var headingButton = document.getElementById("header-text")
   var themeButton = document.getElementById("themeButton")
+
+
   restaurantButton.addEventListener("click", function(event) { handleEvent: restaurantSearch() });
   indoorButton.addEventListener("click", function(event) { handleEvent: indoorSearch() });
   outdoorButton.addEventListener("click", function(event) { handleEvent: outdoorSearch() });
@@ -326,6 +376,130 @@ function createListeners() {
   shopButton.addEventListener("click", function(event) { handleEvent: shoppingSearch() });
   headingButton.addEventListener("click", function(event) { handleEvent: resetPage() });
   themeButton.addEventListener("click", function(event){ handleEvent: changeTheme() });
+}
+
+function createWelcomeMessage() {
+
+  var loginDiv = document.getElementById("login")
+  var loginForm = document.getElementById("login-user");
+  var signUp = document.getElementById("sign-up");
+  var createAccount = document.getElementById("create-account")
+  var createAccount2 = document.getElementById("create-account2")
+  if(createAccount){
+    createAccount.parentNode.removeChild(createAccount)
+    createAccount2.parentNode.removeChild(createAccount2)
+    loginForm.parentNode.removeChild(loginForm)
+    signUp.parentNode.removeChild(signUp)
+  }
+
+  welcomeMessageTest = document.getElementById("welcome-message")
+  
+  if(!welcomeMessageTest) {
+
+    createUser = document.getElementById("create-user")
+    if(createUser) {
+      createUser.parentNode.removeChild(createUser)
+    }
+    welcomeMessage = document.createElement("h2")
+    welcomeMessage.id = "welcome-message"
+    welcomeMessage.innerText = "Welcome Back!"
+  
+    loginDiv.append(welcomeMessage)
+  }
+}
+
+function displaySignUp(event) {
+  event.preventDefault();
+  var createAccount = document.getElementById("create-account")
+  var createAccount2 = document.getElementById("create-account2")
+  var createForm = document.getElementById("login-user");
+  var createAccountButton = document.getElementById("submit")
+  createAccountButton.textContent = "Create new account"
+  createForm.id = "create-user"
+  createAccount.parentNode.removeChild(createAccount)
+  createAccount2.parentNode.removeChild(createAccount2)
+
+  createForm.addEventListener("submit", function(event) { handleEvent: createNewUser(event) });
+}
+
+function createNewUser(event) {
+  event.preventDefault();
+  const loginFormData = new FormData(event.target)
+  const username = loginFormData.get("username")
+  const password = loginFormData.get("password")
+  const userData = { username, password }
+  fetch(usersURL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(userData)
+  })
+  .then(parseJSON)
+  .then(result => successfulLogin(result))
+  createWelcomeMessage();
+}
+
+function loginUser(event) {
+  event.preventDefault();
+  const loginFormData = new FormData(event.target)
+  const username = loginFormData.get("username")
+  const password = loginFormData.get("password")
+  const userData = { username, password }
+
+  fetch(loginURL, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(userData)
+  })
+    .then(parseJSON)
+    .then(result => successfulLogin(result))
+
+  createWelcomeMessage()
+}
+
+
+function successfulLogin(user) {
+  console.log(user)
+  localStorage.setItem('token', user.token);
+  let favCounter = 0
+  let blCounter = 0
+
+  user.favorites.forEach( favorite => {
+    localStorage.setItem(`favorite ${favCounter}`, favorite.name);
+    favCounter++;
+  });
+
+  user.blacklists.forEach( item => {
+    localStorage.setItem(`blacklist #${blCounter}`, item.name);
+    blCounter++;
+  });
+}
+
+function getFavorites() {
+  fetch(favoritesURL, { headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+    .then(parseJSON)
+    .then(console.log)
+}
+
+function getBlacklist() {
+  fetch(blacklistURL, { headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+    .then(parseJSON)
+    .then(console.log)
+}
+
+function parseJSON(response) {
+  return response.json();
 }
 
 function resetPage() {
@@ -536,32 +710,35 @@ function showResultCard(result, results) {
 
   checkIfCardExists()
 
-  map.setCenter(result.geometry.location);
-  map.setZoom(17);
-
-  let resultCard = document.createElement("div");
-  resultCard.id = "result-card";
-  resultCard.innerHTML = 
-    `
-    <i id="exit-button" class="fa fa-times"></i>
-    <h3>${result.name}</h3>
-    <p>Type of activity: ${result.types[0].replace("_"," ")}, ${result.types[1].replace("_"," ")}</p>
-    <p>Is ${result.opening_hours.isOpen() ? "closed" : "open" }</p>
-    <p>Rating: ${result.rating}</p>
-    <p>User Ratings Total: ${result.user_ratings_total}</p>
-    <p>Price Level: ${result.price_level}</p>
-    <a href="https://www.google.com/maps/search/${result.vicinity.replace(" ", "+")}">Address: ${result.vicinity}</a>
-    <h2 id="try-again-button">Try Another?</h2>
-    `;
-
-  document.body.append(resultCard);
-  window.scrollTo(0,0);
-
-  let tryAgainButton = document.getElementById("try-again-button");
-  tryAgainButton.addEventListener("click", function(event) { handleEvent: randomButtonEvent(results) })
-
-  let exitButton = document.getElementById("exit-button");
-  exitButton.addEventListener("click", function(event) { handleEvent: exitCard(resultCard) });
+  try {
+    map.setCenter(result.geometry.location);
+    map.setZoom(17);
+    let resultCard = document.createElement("div");
+    resultCard.id = "result-card";
+    resultCard.innerHTML = 
+      `
+      <i id="exit-button" class="fa fa-times"></i>
+      <h3>${result.name}</h3>
+      <p>Type of activity: ${result.types[0].replace("_"," ")}, ${result.types[1].replace("_"," ")}</p>
+      <p>Is ${result.opening_hours.isOpen() ? "closed" : "open" }</p>
+      <p>Rating: ${result.rating}</p>
+      <p>User Ratings Total: ${result.user_ratings_total}</p>
+      <p>Price Level: ${result.price_level}</p>
+      <a href="https://www.google.com/maps/search/${result.vicinity.replace(" ", "+")}">Address: ${result.vicinity}</a>
+      <h2 id="try-again-button">Try Another?</h2>
+      `;
+  
+    document.body.append(resultCard);
+    window.scrollTo(0,0);
+  
+    let tryAgainButton = document.getElementById("try-again-button");
+    tryAgainButton.addEventListener("click", function(event) { handleEvent: randomButtonEvent(results) })
+  
+    let exitButton = document.getElementById("exit-button");
+    exitButton.addEventListener("click", function(event) { handleEvent: exitCard(resultCard) });
+  } catch(err) {
+    randomButtonEvent(results)
+  }
 }
 
 function exitCard(card) {
@@ -575,7 +752,7 @@ function favoriteButtonEvent(){
 function randomButtonEvent(results) {
   checkIfCardExists()
   if(results != undefined) {
-    let randomResultPick = Math.round(Math.random() * results.length)
+    let randomResultPick = Math.floor(Math.random() * (results.length + 1))
     showResultCard(results[randomResultPick], results)
   } else {
     alert("Problem occoured! Try again.")

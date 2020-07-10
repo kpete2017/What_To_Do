@@ -1,20 +1,21 @@
 class AuthenticationController < ApplicationController
+  skip_before_action :authenticate, only: [:login]
+
   def login
     @user = User.find_by(username: params[:username])
 
-    if !@user
-      render json: { error: "No user by that name" }, status: :unauthorized
-    else
-      if !@user.authenticate params[:password]
-        render json: {error: "Wrong Password"}, status: :unauthorized
+    if @user
+
+      if @user.authenticate(params[:password])
+        payload = { user_id: @user.id }
+        secret = Rails.application.secrets.secret_key_base
+        token = create_token(payload)
+        render json: { username: @user.username, favorites: @user.favorites, blacklists: @user.blacklists, token: token }
       else
-        payload = {
-          user_id: @user.id
-        }
-        secret = Rails.application.secret_key_base
-        token = JWT.encode payload, secret
-        render json: { token: token }, status: :created
+        render json: { message: "Please try again!!!" }
       end
+    else
+      render json: { message: "Please try again" }
     end
   end
 end

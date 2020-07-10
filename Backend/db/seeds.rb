@@ -6,7 +6,22 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.create(
+Favorite.destroy_all
+Blacklist.destroy_all
+User.destroy_all
+
+kyle = User.create({
     username: "kyle",
     password: "password"
-)
+})
+
+Blacklist.create({
+    name: "Taco Bell",
+    user_id: kyle.id
+})
+
+Favorite.create({
+    name: "Chick Fil A",
+    user_id: kyle.id
+})
+
