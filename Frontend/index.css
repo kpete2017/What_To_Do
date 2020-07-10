@@ -298,6 +298,68 @@ body {
     width: 100%;
 }
 
+#favorites-div {
+    overflow: auto;
+    padding: 1rem;
+    color: var(--text-secondary);
+    background-color: var(--bg-secondary);
+    position: absolute;
+    height:35rem;
+    width: 25rem;
+    top: 6rem;
+    left: 20rem;
+}
+
+#favorites-div h2{
+    margin: 1rem;
+}
+
+#favorites-div form{
+    margin: 1rem;
+}
+
+#favorites-div #exit-button-favorite {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: var(--text-secondary);
+    transition: 400ms;
+    cursor: pointer;
+}
+
+#favorites-div #exit-button-favorite:hover {
+    color: #ff7eee;
+    transform: rotate(-180deg);
+    transition: 400ms;
+}
+
+#favorite-list h4 {
+    width: 2.5rem;
+    background-color: var(--bg-primary);
+    padding: .75rem;
+    font-size: x-small;
+    cursor: pointer;
+    transition: 400ms;
+}
+
+#favorite-list h4:hover {
+    color: #ff7eee;
+    transition: 400ms;
+}
+
+
+#login a {
+    color: var(--text-secondary);
+    position: absolute;
+    top: 3.2rem;
+}
+
+#login a:hover {
+    color: #df49a6;
+    cursor: pointer;
+    transition: 400ms;
+}
+
 .logo svg {
     transform: rotate(0deg);
     transition: var(--transition-speed);
@@ -402,6 +464,14 @@ body {
 
     #submit {
         width: 3.5rem;
+    }
+
+
+
+    #logout:hover {
+        color: #df49a6;
+        cursor: pointer;
+        transition: 400ms;
     }
 
     .navbar {

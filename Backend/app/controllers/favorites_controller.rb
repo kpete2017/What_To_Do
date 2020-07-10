@@ -11,6 +11,15 @@ class FavoritesController < ApplicationController
         render json: @favorite
     end
 
+    
+    def destroy
+
+        @favorite = Favorite.find(params[:id])
+        @favorite.destroy
+
+        redirect_to "http://localhost:3002/"
+    end
+
     private
     
     def favorite_params
@@ -19,4 +28,5 @@ class FavoritesController < ApplicationController
         .permit(:name)
         .merge(user_id: @user.id)
     end
+
 end

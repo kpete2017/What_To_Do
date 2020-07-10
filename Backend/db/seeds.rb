@@ -20,8 +20,28 @@ Blacklist.create({
     user_id: kyle.id
 })
 
+Blacklist.create({
+    name: "Arbys",
+    user_id: kyle.id
+})
+
+Blacklist.create({
+    name: "KFC",
+    user_id: kyle.id
+})
+
+
 Favorite.create({
     name: "Chick Fil A",
     user_id: kyle.id
 })
 
+Favorite.create({
+    name: "McDonald's",
+    user_id: kyle.id
+})
+
+Favorite.create({
+    name: "Sonic",
+    user_id: kyle.id
+})

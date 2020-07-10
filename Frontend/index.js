@@ -320,8 +320,9 @@ function checkForToken() {
   var loginForm = document.getElementById("login-user");
   var signUp = document.getElementById("sign-up");
   if(localStorage.getItem('token')) {
-    createWelcomeMessage()
-    createAccountListeners()
+    createAccountListeners();
+    createWelcomeMessage();
+    
   } else {
     signUp.addEventListener("click", function(event) { handleEvent: displaySignUp(event) });
     loginForm.addEventListener("submit", function(event) { handleEvent: loginUser(event) });
@@ -346,18 +347,149 @@ function homeButtonClicked() {
 }
 
 function favoritesButtonClicked() {
-  console.log("Favorites Button Clicked")
+
+  fetch(favoritesURL, { headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+    .then(parseJSON)
+    .then(results => createFavoritesPage(results))
+}
+
+function createFavoritesPage(results) {
+  console.log(results)
+
+  let listItemTest = document.getElementById("favorites-div")
+
+  if(listItemTest) {
+    listItemTest.parentNode.removeChild(listItemTest)
+  }
+
+  const favoritesDiv = document.createElement("div")
+  favoritesDiv.id = "favorites-div"
+  favoritesDiv.innerHTML = `
+  <i id="exit-button-favorite" class="fa fa-times"></i>
+    <h2>Favorites</h2>
+    <form>
+    <input name="favorites" type="text" placeholder="Enter New Favorite!">
+    <button id="submit" type="submit">Submit</button>
+    </form>
+    <ul id="favorite-list"></ul>
+  `
+  let count = 0;
+
+  document.body.append(favoritesDiv);
+  const favoriteList = document.getElementById("favorite-list");
+  results.forEach( favorite => {
+    let listItem = document.createElement("li");
+    let deleteItem = document.createElement("h4")
+    listItem.id = `favorite-item${count}`
+    deleteItem.id = `delete-favorite${count}`
+    deleteItem.innerText = "Delete"
+    listItem.innerText = favorite.name;
+    favoriteList.append(listItem);
+    favoriteList.append(deleteItem)
+
+    let getDeleteButton = document.getElementById(`delete-favorite${count}`)
+    let getListItem = document.getElementById(`favorite-item${count}`)
+    getDeleteButton.addEventListener("click", function(event) { handleEvent: removeFavorite(getDeleteButton, getListItem, blacklist) })
+    
+    count++;
+  })
+
+  let exitButton = document.getElementById("exit-button-favorite");
+  exitButton.addEventListener("click", function(event) { handleEvent: exitCard(favoritesDiv) });
+}
+
+function removeFavorite(listItem, deleteItem, favorite) {
+
+  listItem.parentNode.removeChild(listItem)
+  deleteItem.parentNode.removeChild(deleteItem)
+
+  fetch(`${favoritesURL}/${favorite.id}`, {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+    }
+  })
 
 }
 
 function blacklistButtonClicked() {
-  console.log("Blacklist Button Clicked")
+
+  fetch(blacklistURL, { 
+    headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+    .then(parseJSON)
+    .then(results => createBlacklistPage(results))
+
+}
+
+function createBlacklistPage(results) {
+
+  let listItemTest = document.getElementById("favorites-div")
+
+  if(listItemTest) {
+    listItemTest.parentNode.removeChild(listItemTest)
+  }
+
+  console.log(results)
+
+  const favoritesDiv = document.createElement("div")
+  favoritesDiv.id = "favorites-div"
+  favoritesDiv.innerHTML = `
+  <i id="exit-button-favorite" class="fa fa-times"></i>
+    <h2>Blacklisted Places</h2>
+    <ul id="favorite-list"></ul>
+  `
+  let count = 0;
+
+  document.body.append(favoritesDiv);
+  const favoriteList = document.getElementById("favorite-list");
+  results.forEach( blacklist => {
+    let listItem = document.createElement("li");
+    let deleteItem = document.createElement("h4")
+    listItem.id = `favorite-item${count}`
+    deleteItem.id = `delete-favorite${count}`
+    deleteItem.innerText = "Delete"
+    listItem.innerText = blacklist.name;
+    favoriteList.append(listItem);
+    favoriteList.append(deleteItem)
+
+    let getDeleteButton = document.getElementById(`delete-favorite${count}`)
+    let getListItem = document.getElementById(`favorite-item${count}`)
+    getDeleteButton.addEventListener("click", function(event) { handleEvent: removeBlacklist(getDeleteButton, getListItem, blacklist) })
+    
+    count++;
+  })
+
+  let exitButton = document.getElementById("exit-button-favorite");
+  exitButton.addEventListener("click", function(event) { handleEvent: exitCard(favoritesDiv) });
+}
+
+function removeBlacklist(listItem, deleteItem, blacklist) {
+
+  listItem.parentNode.removeChild(listItem)
+  deleteItem.parentNode.removeChild(deleteItem)
+
+  fetch(`${blacklistURL}/${blacklist.id}`, {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`
+    }
+  })
+
 }
 
 function settingsButtonClicked() {
   console.log("Settings Button Clicked")
 }
-
 
 function createNonAccountListeners() {
   var restaurantButton = document.getElementById("restaurant-button");
@@ -380,31 +512,45 @@ function createNonAccountListeners() {
 
 function createWelcomeMessage() {
 
-  var loginDiv = document.getElementById("login")
+  var loginDiv = document.getElementById("login");
   var loginForm = document.getElementById("login-user");
   var signUp = document.getElementById("sign-up");
-  var createAccount = document.getElementById("create-account")
-  var createAccount2 = document.getElementById("create-account2")
+  var createAccount = document.getElementById("create-account");
+  var createAccount2 = document.getElementById("create-account2");
   if(createAccount){
-    createAccount.parentNode.removeChild(createAccount)
-    createAccount2.parentNode.removeChild(createAccount2)
-    loginForm.parentNode.removeChild(loginForm)
-    signUp.parentNode.removeChild(signUp)
+    createAccount.parentNode.removeChild(createAccount);
+    createAccount2.parentNode.removeChild(createAccount2);
+    loginForm.parentNode.removeChild(loginForm);
+    signUp.parentNode.removeChild(signUp);
   }
 
-  welcomeMessageTest = document.getElementById("welcome-message")
+  welcomeMessageTest = document.getElementById("welcome-message");
   
   if(!welcomeMessageTest) {
-
-    createUser = document.getElementById("create-user")
+    createUser = document.getElementById("create-user");
     if(createUser) {
-      createUser.parentNode.removeChild(createUser)
+      createUser.parentNode.removeChild(createUser);
     }
-    welcomeMessage = document.createElement("h2")
-    welcomeMessage.id = "welcome-message"
-    welcomeMessage.innerText = "Welcome Back!"
+    welcomeMessage = document.createElement("h2");
+    welcomeMessage.id = "welcome-message";
+    if (localStorage.getItem('username') === 'null') {
+      console.log(localStorage.getItem('username'))
+      resetPage();
+    }
+    welcomeMessage.innerText = `Welcome Back ${localStorage.getItem('username')}!`;
+
+    logout = document.createElement("a");
+    logout.id = "logout";
+    logout.innerText = "Logout";
+
   
-    loginDiv.append(welcomeMessage)
+    loginDiv.append(welcomeMessage);
+    loginDiv.append(logout);
+
+    logout.addEventListener("click", () => {
+      localStorage.clear();
+      resetPage();
+    })
   }
 }
 
@@ -437,7 +583,6 @@ function createNewUser(event) {
   })
   .then(parseJSON)
   .then(result => successfulLogin(result))
-  createWelcomeMessage();
 }
 
 function loginUser(event) {
@@ -457,45 +602,24 @@ function loginUser(event) {
     .then(parseJSON)
     .then(result => successfulLogin(result))
 
-  createWelcomeMessage()
 }
-
 
 function successfulLogin(user) {
-  console.log(user)
+  
   localStorage.setItem('token', user.token);
-  let favCounter = 0
-  let blCounter = 0
+  localStorage.setItem('username', user.username);
+  favoriteCounter = 0;
+  blacklistCounter = 0;
 
-  user.favorites.forEach( favorite => {
-    localStorage.setItem(`favorite ${favCounter}`, favorite.name);
-    favCounter++;
-  });
+  console.log(user.favorites);
 
-  user.blacklists.forEach( item => {
-    localStorage.setItem(`blacklist #${blCounter}`, item.name);
-    blCounter++;
-  });
-}
+  localStorage.setItem('favorites', JSON.stringify(user.favorites));
+  localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
 
-function getFavorites() {
-  fetch(favoritesURL, { headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem('token')}`
-    }
-  })
-    .then(parseJSON)
-    .then(console.log)
-}
 
-function getBlacklist() {
-  fetch(blacklistURL, { headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem('token')}`
-    }
-  })
-    .then(parseJSON)
-    .then(console.log)
+  
+  createWelcomeMessage();
+  resetPage();
 }
 
 function parseJSON(response) {
@@ -697,7 +821,7 @@ function addMenuButton(results) {
     menuButtons.append(clearButton);
 
     clearButton.addEventListener("click", () => {
-      location.reload();
+      resetPage();
     });
 
     favoriteButton.addEventListener("click", function(event){ handleEvent: favoriteButtonEvent()});
