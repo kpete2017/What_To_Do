@@ -320,13 +320,13 @@ function checkForToken() {
   var loginForm = document.getElementById("login-user");
   var signUp = document.getElementById("sign-up");
   if(localStorage.getItem('token')) {
-    createAccountListeners();
     createWelcomeMessage();
     
   } else {
     signUp.addEventListener("click", function(event) { handleEvent: displaySignUp(event) });
     loginForm.addEventListener("submit", function(event) { handleEvent: loginUser(event) });
   }
+  createAccountListeners();
   createNonAccountListeners();
 }
 
@@ -349,14 +349,15 @@ function homeButtonClicked() {
 function favoritesButtonClicked() {
   if(!localStorage.getItem("token")) {
     alert("Please sign in to access sign in features!")
+  } else {
+    fetch(favoritesURL, { headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+      .then(parseJSON)
+      .then(results => createFavoritesPage(results))
   }
-  fetch(favoritesURL, { headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem('token')}`
-    }
-  })
-    .then(parseJSON)
-    .then(results => createFavoritesPage(results))
 }
 
 function createFavoritesPage(results) {
@@ -429,7 +430,7 @@ function createNewFavorite(event, favoritesDiv, results) {
     body: JSON.stringify(favoriteJson)
   })
     .then(parseJSON)
-    .then(result => appendNewFavorite(favoritesDiv, result))
+    .then(result => appendNewFavorite(result))
 
 }
 
@@ -472,7 +473,7 @@ function blacklistButtonClicked() {
 
   if(!localStorage.getItem("token")) {
     alert("Please sign in to access sign in features!")
-  }
+  } else {
 
   fetch(blacklistURL, { 
     headers: {
@@ -482,7 +483,7 @@ function blacklistButtonClicked() {
     })
     .then(parseJSON)
     .then(results => createBlacklistPage(results))
-
+  }
 }
 
 function createBlacklistPage(results) {
@@ -606,8 +607,11 @@ function createNonAccountListeners() {
   var shopButton = document.getElementById("shopping-button");
   var headingButton = document.getElementById("header-text")
   var themeButton = document.getElementById("themeButton")
+  var fastFoodButton = document.getElementById("fast-food-button")
 
 
+
+  fastFoodButton.addEventListener("click", function(event) { handleEvent: fastFoodSearch() });
   restaurantButton.addEventListener("click", function(event) { handleEvent: restaurantSearch() });
   indoorButton.addEventListener("click", function(event) { handleEvent: indoorSearch() });
   outdoorButton.addEventListener("click", function(event) { handleEvent: outdoorSearch() });
@@ -675,9 +679,9 @@ function displaySignUp(event) {
 
 function createNewUser(event) {
   event.preventDefault();
-  const loginFormData = new FormData(event.target)
-  const username = loginFormData.get("username")
-  const password = loginFormData.get("password")
+  const createNewFormData = new FormData(event.target)
+  const username = createNewFormData.get("username")
+  const password = createNewFormData.get("password")
   const userData = { username, password }
   fetch(usersURL, {
     method: "POST",
@@ -687,7 +691,22 @@ function createNewUser(event) {
     body: JSON.stringify(userData)
   })
   .then(parseJSON)
-  .then(result => successfulLogin(result))
+  .then(result => successfulCreateLogin(result))
+}
+
+function successfulCreateLogin(user) {
+  localStorage.setItem('token', user.token);
+  localStorage.setItem('username', user.username);
+  favoriteCounter = 0;
+  blacklistCounter = 0;
+
+
+  localStorage.setItem('favorites', JSON.stringify(user.favorites));
+  localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
+
+  
+  createWelcomeMessage();
+  resetPage();
 }
 
 function loginUser(event) {
@@ -710,20 +729,24 @@ function loginUser(event) {
 }
 
 function successfulLogin(user) {
-  
-  localStorage.setItem('token', user.token);
-  localStorage.setItem('username', user.username);
-  favoriteCounter = 0;
-  blacklistCounter = 0;
+
+  if(user.username != undefined) {
+    localStorage.setItem('token', user.token);
+    localStorage.setItem('username', user.username);
+    favoriteCounter = 0;
+    blacklistCounter = 0;
 
 
-  localStorage.setItem('favorites', JSON.stringify(user.favorites));
-  localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
+    localStorage.setItem('favorites', JSON.stringify(user.favorites));
+    localStorage.setItem('blacklists', JSON.stringify(user.blacklists));
 
 
-  
-  createWelcomeMessage();
-  resetPage();
+    
+    createWelcomeMessage();
+    resetPage();
+  } else {
+    alert("Either username or password is incorrect. Please try again")
+  }
 }
 
 function parseJSON(response) {
@@ -792,9 +815,13 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.open(map);
 }
 
+function fastFoodSearch() {
+  fastFoodArray = ["Fast Food"]
+  searchPlacesApiForKeyword(fastFoodArray, "yellow")
+}
+
 function restaurantSearch() {
-    const restaurantType = ["restaurant", "bar"];
-    searchPlacesApiForType(restaurantType, "red");
+    const restaurantType = ["restaurant"];
     searchPlacesApiForKeyword(restaurantType, "red");
 }
 
@@ -809,8 +836,8 @@ function outdoorSearch() {
 }
 
 function shoppingSearch() {
-  const storeTypes = ["book_store", "clothing_store", "department_store", "shoe_store", "electronics_store", "furniture_store"];
-  searchPlacesApiForType(storeTypes, "orange");
+  const storeTypes = ["book store", "clothing store", "department store", "shoe store", "electronics store", "furniture store"];
+  searchPlacesApiForKeyword(storeTypes, "orange");
 }
 
 function searchPlacesApiForKeyword(keyArray, color) {
@@ -821,11 +848,11 @@ function searchPlacesApiForKeyword(keyArray, color) {
           openNow: true,
           radius: 15000,
           rankBy: google.maps.places.RankBy.PROMINENCE,
-          keyword: keyArray[i]
+          query: keyArray[i]
       };
 
       service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, function(results, status) {
+      service.textSearch(request, function(results, status) {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             addMenuButton(results);
             for (let i = 0; i < results.length; i++) {
@@ -835,38 +862,6 @@ function searchPlacesApiForKeyword(keyArray, color) {
               item.innerText = results[i].name;
               itemList.append(item);
               item.addEventListener("click", function(event){ handleEvent: showResultCard(results[i], results) });
-            }
-          }
-      })
-  }
-}
-
-function searchPlacesApiForType(keyArray, color) {
-  var element = document.getElementById("option-ask");
-  if(element) {
-      element.parentNode.removeChild(element);
-  }
-  map.setZoom(12)
-  for(let i = 0; i < keyArray.length; i++) {
-      var request = {
-          location: pos,
-          openNow: true,
-          radius: 15000,
-          rankBy: google.maps.places.RankBy.PROMINENCE,
-          type: keyArray[i]
-      };
-
-      service = new google.maps.places.PlacesService(map);
-      service.nearbySearch(request, function(results, status) {
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            addMenuButton(results);
-            for (let i = 0; i < results.length; i++) {
-                createMarker(results[i], color);
-                var itemList = document.getElementById("item-list");
-                let item = document.createElement("li");
-                item.innerText = results[i].name;
-                itemList.append(item);
-                item.addEventListener("click", function(event){ handleEvent: showResultCard(results[i], results) });
             }
           }
       })
@@ -908,12 +903,12 @@ function addMenuButton(results) {
 
     var favoriteButton = document.createElement("h2");
     favoriteButton.id = "favorite-button"
-    favoriteButton.innerText = "Pick from favorites";
+    favoriteButton.innerText = "random with favorites";
     menuButtons.append(favoriteButton);
 
     var removeBlacklistButton = document.createElement("h2");
     removeBlacklistButton.id = "remove-blacklist-button"
-    removeBlacklistButton.innerText = "Remove blacklist items";
+    removeBlacklistButton.innerText = "random with blacklist";
     menuButtons.append(removeBlacklistButton);
       
     var clearButton = document.createElement("h2");
@@ -948,7 +943,7 @@ function showResultCard(result, results) {
       <p>Rating: ${result.rating}</p>
       <p>User Ratings Total: ${result.user_ratings_total}</p>
       <p>Price Level: ${result.price_level}</p>
-      <a href="https://www.google.com/maps/search/${result.vicinity.replace(" ", "+")}">Address: ${result.vicinity}</a>
+      <a href="https://www.google.com/maps/search/${result.formatted_address.replace(" ", "+")}">Address: ${result.formatted_address}</a>
       <h2 id="try-again-button">Try Another?</h2>
       `;
   
@@ -961,7 +956,7 @@ function showResultCard(result, results) {
     let exitButton = document.getElementById("exit-button");
     exitButton.addEventListener("click", function(event) { handleEvent: exitCard(resultCard) });
   } catch(err) {
-    randomButtonEvent(results)
+    alert("error")
   }
 }
 
@@ -981,17 +976,16 @@ function favoriteButtonEvent(placeListResults){
 
 }
 
-function checkIfRandomFavPickMatches(results, placeListResults) {
-  let randomResultPick = Math.floor(Math.random() * (placeListResults.length + 1))
-  console.log(placeListResults[randomResultPick])
-  results.forEach( favorite => {
-    if(placeListResults[randomResultPick].name == favorite.name) {
-      showResultCard(placeListResults[randomResultPick], placeListResults)
+function checkIfRandomFavPickMatches(favoritesList, placeListResults) {
+  for(let j = 0; j < placeListResults.length; j++) {
+    for(let i = 0; i < favoritesList.length; i++) {
+      if(placeListResults[j].name === favoritesList[i].name) {
+        return showResultCard(placeListResults[j], placeListResults)
+      }
     }
-  })
+  }
 
-  showResultCard(placeListResults[randomResultPick], placeListResults)
-
+  alert("No Favorites Near You")
 }
 
 function randomButtonEvent(results) {
@@ -1015,13 +1009,17 @@ function blacklistButtonEvent(placeListResults) {
     .then(results => checkIfRandomPickMatchesBlacklist(results, placeListResults))
 }
 
-function checkIfRandomPickMatchesBlacklist(results, placeListResults) {
-  let randomResultPick = Math.floor(Math.random() * (results.length + 1))
-  results.forEach( blacklist => {
-    if(placeListResults[randomResultPick].name != blacklist.name) {
-      showResultCard(placeListResults[randomResultPick], placeListResults)
+function checkIfRandomPickMatchesBlacklist(blackListItem, placeListResults) {
+  let randomResultPick = Math.floor(Math.random() * (placeListResults.length + 1))
+
+  for(let i = 0; i < blackListItem.length; i++) {
+    if(placeListResults[randomResultPick].name === blackListItem[i].name) {
+      checkIfRandomPickMatchesBlacklist(blackListItem, placeListResults);
     }
-  })
+  }
+  
+  showResultCard(placeListResults[randomResultPick], placeListResults)
+
 }
 
 function checkIfCardExists() {
