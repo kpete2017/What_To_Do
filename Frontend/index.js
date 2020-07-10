@@ -347,7 +347,9 @@ function homeButtonClicked() {
 }
 
 function favoritesButtonClicked() {
-
+  if(!localStorage.getItem("token")) {
+    alert("Please sign in to access sign in features!")
+  }
   fetch(favoritesURL, { headers: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${localStorage.getItem('token')}`
@@ -358,7 +360,6 @@ function favoritesButtonClicked() {
 }
 
 function createFavoritesPage(results) {
-
 
   let listItemTest = document.getElementById("favorites-div")
 
@@ -469,6 +470,10 @@ function removeFavorite(listItem, deleteItem, favorite) {
 
 function blacklistButtonClicked() {
 
+  if(!localStorage.getItem("token")) {
+    alert("Please sign in to access sign in features!")
+  }
+
   fetch(blacklistURL, { 
     headers: {
     "Content-Type": "application/json",
@@ -573,7 +578,6 @@ function appendNewBlacklist(result) {
   count++
 }
 
-
 function removeBlacklist(listItem, deleteItem, blacklist) {
 
   listItem.parentNode.removeChild(listItem)
@@ -590,13 +594,15 @@ function removeBlacklist(listItem, deleteItem, blacklist) {
 }
 
 function settingsButtonClicked() {
+  if(localStorage.getItem("token")) {
+    alert("Please sign in to access sign in features!")
+  }
 }
 
 function createNonAccountListeners() {
   var restaurantButton = document.getElementById("restaurant-button");
   var outdoorButton = document.getElementById("outdoor-button");
   var indoorButton = document.getElementById("indoor-button");
-  var anyButton = document.getElementById("any-button");
   var shopButton = document.getElementById("shopping-button");
   var headingButton = document.getElementById("header-text")
   var themeButton = document.getElementById("themeButton")
@@ -605,7 +611,6 @@ function createNonAccountListeners() {
   restaurantButton.addEventListener("click", function(event) { handleEvent: restaurantSearch() });
   indoorButton.addEventListener("click", function(event) { handleEvent: indoorSearch() });
   outdoorButton.addEventListener("click", function(event) { handleEvent: outdoorSearch() });
-  anyButton.addEventListener("click", function(event) { handleEvent: anySearch() });
   shopButton.addEventListener("click", function(event) { handleEvent: shoppingSearch() });
   headingButton.addEventListener("click", function(event) { handleEvent: resetPage() });
   themeButton.addEventListener("click", function(event){ handleEvent: changeTheme() });
@@ -808,9 +813,6 @@ function shoppingSearch() {
   searchPlacesApiForType(storeTypes, "orange");
 }
 
-function anySearch() {
-}
-
 function searchPlacesApiForKeyword(keyArray, color) {
   map.setZoom(12)
   for(let i = 0; i < keyArray.length; i++) {
@@ -922,8 +924,8 @@ function addMenuButton(results) {
       resetPage();
     });
 
-    favoriteButton.addEventListener("click", function(event){ handleEvent: favoriteButtonEvent()});
-    removeBlacklistButton.addEventListener("click", function(event){ handleEvent: blacklistButtonEvent()});
+    favoriteButton.addEventListener("click", function(event){ handleEvent: favoriteButtonEvent(results)});
+    removeBlacklistButton.addEventListener("click", function(event){ handleEvent: blacklistButtonEvent(results)});
     randomButton.addEventListener("click", function(event){ handleEvent: randomButtonEvent(results)});
   }
 }
@@ -967,11 +969,33 @@ function exitCard(card) {
   card.parentNode.removeChild(card)
 }
 
-function favoriteButtonEvent(){
+function favoriteButtonEvent(placeListResults){
+  checkIfCardExists();
+  fetch(favoritesURL, { headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+    .then(parseJSON)
+    .then(results => checkIfRandomFavPickMatches(results, placeListResults))
+
+}
+
+function checkIfRandomFavPickMatches(results, placeListResults) {
+  let randomResultPick = Math.floor(Math.random() * (placeListResults.length + 1))
+  console.log(placeListResults[randomResultPick])
+  results.forEach( favorite => {
+    if(placeListResults[randomResultPick].name == favorite.name) {
+      showResultCard(placeListResults[randomResultPick], placeListResults)
+    }
+  })
+
+  showResultCard(placeListResults[randomResultPick], placeListResults)
+
 }
 
 function randomButtonEvent(results) {
-  checkIfCardExists()
+  checkIfCardExists();
   if(results != undefined) {
     let randomResultPick = Math.floor(Math.random() * (results.length + 1))
     showResultCard(results[randomResultPick], results)
@@ -980,7 +1004,24 @@ function randomButtonEvent(results) {
   }
 }
 
-function blacklistButtonEvent() {
+function blacklistButtonEvent(placeListResults) {
+  checkIfCardExists();
+  fetch(blacklistURL, { headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  })
+    .then(parseJSON)
+    .then(results => checkIfRandomPickMatchesBlacklist(results, placeListResults))
+}
+
+function checkIfRandomPickMatchesBlacklist(results, placeListResults) {
+  let randomResultPick = Math.floor(Math.random() * (results.length + 1))
+  results.forEach( blacklist => {
+    if(placeListResults[randomResultPick].name != blacklist.name) {
+      showResultCard(placeListResults[randomResultPick], placeListResults)
+    }
+  })
 }
 
 function checkIfCardExists() {

@@ -299,6 +299,7 @@ body {
 }
 
 #favorites-div {
+    z-index: 2;
     overflow: auto;
     padding: 1rem;
     color: var(--text-secondary);
@@ -307,7 +308,7 @@ body {
     height:35rem;
     width: 25rem;
     top: 6rem;
-    left: 20rem;
+    left: 10rem;
 }
 
 #favorites-div h2{
@@ -348,6 +349,7 @@ body {
 }
 
 #blacklist-div {
+    z-index: 2;
     overflow: auto;
     padding: 1rem;
     color: var(--text-secondary);
@@ -356,7 +358,7 @@ body {
     height:35rem;
     width: 25rem;
     top: 6rem;
-    left: 20rem;
+    left: 10rem;
 }
 
 #blacklist-div h2{
