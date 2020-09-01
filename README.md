@@ -74,7 +74,7 @@ In order to run the frontend of this project locally you will need [Node.js](htt
 
 ### Main Page
 ![Image of Home](https://i.imgur.com/O1sbuBZ.png)
-* The main page is the only page of the app at the moment with other features such as favorites being rendered on top of it. 
+* The main page is where all the fetaures are kept.
 * At the very center of the page is the map which shows the user's genereal location with a blue marker representing the center of the map. 
 * Scroll down a little and there will be five different buttons each representing a catagory of activity. At a click the webapp will search all open nearby atcivities based on the catagory and place a marker on the map of its location as well as display a list of all the activities below.
 * once clicked a list of every activity will be listed below as well as four new buttons. The first from the left will randomly pick an item from the list, the second from the left will randomly pick one that is included in the users favorties, the third from the left will pick a random activity as long as it is not included in the user's blacklist, and the fourth button will clear all markers and iteams from the list.
