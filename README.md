@@ -1,5 +1,5 @@
 # What To Do?
-![Image of Home](https://i.imgur.com/dABssSG.png)
+![Image of Home](https://i.imgur.com/QkB4Hlg.png)
 
 <!-- TABLE OF CONTENTS -->
 ## Table of Contents
@@ -73,7 +73,7 @@ In order to run the frontend of this project locally you will need [Node.js](htt
 ## Usage
 
 ### Main Page
-![Image of Home](https://i.imgur.com/geZLiuN.png)
+![Image of Home](https://i.imgur.com/O1sbuBZ.png)
 * The main page is the only page of the app at the moment with other features such as favorites being rendered on top of it. 
 * At the very center of the page is the map which shows the user's genereal location with a blue marker representing the center of the map. 
 * Scroll down a little and there will be five different buttons each representing a catagory of activity. At a click the webapp will search all open nearby atcivities based on the catagory and place a marker on the map of its location as well as display a list of all the activities below.
@@ -82,11 +82,11 @@ In order to run the frontend of this project locally you will need [Node.js](htt
 * The user can also opt to "Try Again" which will randomly pick another item out of the list if they did not like the activity that was presented to them.
 
 ### Favorites Settings
-![Image of Notes](https://i.imgur.com/F01QKU8.png)
+![Image of Notes](https://i.imgur.com/APYKzpI.png)
 From here the user can add or remove activities from their favroties list which can then searched through during the users activity search.
 
 ### Blacklist Settings
-![Image of Party](https://i.imgur.com/6tVNAUd.png)
+![Image of Party](https://i.imgur.com/mulVOLd.png)
 From here the user can add or remove activites from their blacklist which means they will never show up in a random search if prompted.
 
 <!-- CONTACT -->
