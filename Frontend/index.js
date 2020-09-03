@@ -339,7 +339,6 @@ function createAccountListeners() {
   homeButton.addEventListener("click", function(event) { handleEvent: homeButtonClicked() })
   favoritesButton.addEventListener("click", function(event) { handleEvent: favoritesButtonClicked() })
   blacklistButton.addEventListener("click", function(event) { handleEvent: blacklistButtonClicked() })
-  settingsButton.addEventListener("click", function(event) { handleEvent: settingsButtonClicked() })
 }
 
 function homeButtonClicked() {
@@ -591,12 +590,6 @@ function removeBlacklist(listItem, deleteItem, blacklist) {
     }
   })
 
-}
-
-function settingsButtonClicked() {
-  if(localStorage.getItem("token")) {
-    alert("Please sign in to access sign in features!")
-  }
 }
 
 function createNonAccountListeners() {
