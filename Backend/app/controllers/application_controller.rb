@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::API
+  class ApplicationController < ActionController::API
 
     before_action :authenticate
 
@@ -11,7 +11,7 @@ class ApplicationController < ActionController::API
     end
     
     def secret
-        Rails.application.secrets.secret_key_base
+        secret = ENV['SECRET_KEY_BASE'] || Rails.application.secrets.secret_key_base
     end
 
     def authenticate

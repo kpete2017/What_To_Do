@@ -8,9 +8,14 @@ class AuthenticationController < ApplicationController
 
       if @user.authenticate(params[:password])
         payload = { user_id: @user.id }
-        secret = Rails.application.secrets.secret_key_base
+        secret = ENV['SECRET_KEY_BASE'] || Rails.application.secrets.secret_key_base
         token = create_token(payload)
-        render json: { username: @user.username, favorites: @user.favorites, blacklists: @user.blacklists, token: token }
+        render json: { 
+          username: @user.username,
+          favorites: @user.favorites,
+          blacklists: @user.blacklists,
+          token: token 
+        }
       else
         render json: { message: "Please try again!!!" }
       end
