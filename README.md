@@ -96,5 +96,3 @@ From here the user can add or remove activites from their blacklist which means 
 ## Contact
 
 Kyle Petersen - [Linked-In](https://www.linkedin.com/in/kyle-petersen-27259b18b/) - kpete2017@gmail.com
-
-Project Link: [https://github.com/kpete2017/Zelos](https://github.com/kpete2017/Zelos)
