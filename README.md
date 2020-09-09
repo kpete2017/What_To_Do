@@ -72,7 +72,7 @@ In order to run the frontend of this project locally you will need [Node.js](htt
 10. lite-server to run the frontend on port 3001
 
 11. Then use the window that appears and have fun with the app
-<!-- USAGE EXAMPLES -->
+
 ## Usage
 
 ### Main Page
